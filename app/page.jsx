@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-export default function HomePage(){
+export default function HomePage() {
 
 
   return (
-     
+
     <section className="flex flex-col items-center text-center gap-8">
       {/* App Title */}
       <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">

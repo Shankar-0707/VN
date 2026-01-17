@@ -1,27 +1,33 @@
 "use server";
+
 import { notesStore } from "@/lib/store";
 import { redirect } from "next/navigation";
 
-export async function processVoice(formData){
-    // fake processing delay
-    await new Promise((res) => setTimeout(res, 1000));
+export async function processVoice(formData) {
+ const audio = formData.get("audio");
 
-    const audio = formData.get("audio");
+console.log("IS FILE:", audio instanceof File);
+console.log("TYPE:", audio?.type);
+console.log("SIZE:", audio?.size);
+console.log("NAME:", audio.name);
+console.log("LAST MODIFIED:", audio.lastModified);
 
-    console.log("Received Audio Blob : ", audio);
-    console.log("Audio size : ", audio?.size);
 
-    const fakeTranscript = "This is a fake transcript generated from the recorded voice.";
+  
 
-    const fakeSummary = "User talked about an idea and wants a summarized note.";
+  if (!audio || audio.size === 0) {
+    throw new Error("No audio received");
+  }
 
-    const note = {
-        id : Date.now().toString(),
-        transcript : fakeTranscript,
-        summary : fakeSummary,
-    };
+  console.log("Audio type:", audio.type);
+  console.log("Audio size:", audio.size);
 
-    notesStore.push(note);
+  const note = {
+    id: Date.now().toString(),
+    transcript: "Fake transcript (real audio received)",
+    summary: "Fake summary (audio validated)",
+  };
 
-    redirect("/dashboard");
+  notesStore.push(note);
+  redirect("/dashboard");
 }

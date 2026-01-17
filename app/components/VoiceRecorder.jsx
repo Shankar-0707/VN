@@ -5,7 +5,7 @@ import { processVoice } from "../actions/Voice";
 export default function VoiceRecorder() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
-  const audioBlobRef = useRef(null);
+  const fileInputRef = useRef(null);
   const streamRef = useRef(null);
 
   const [isRecording, setIsRecording] = useState(false);
@@ -22,9 +22,17 @@ export default function VoiceRecorder() {
     };
 
     mediaRecorderRef.current.onstop = () => {
-      audioBlobRef.current = new Blob(audioChunksRef.current, {
+      const audioBlob = new Blob(audioChunksRef.current, {
         type: "audio/webm",
       });
+
+      const audioFile = new File([audioBlob], "voice.webm", {
+        type: "audio/webm",
+      });
+
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(audioFile);
+      fileInputRef.current.files = dataTransfer.files;
 
       streamRef.current.getTracks().forEach((t) => t.stop());
     };
@@ -40,11 +48,13 @@ export default function VoiceRecorder() {
 
   return (
     <form action={processVoice} className="flex flex-col gap-4">
-      {/* 🔥 REAL FORM FIELD */}
+      {/* REAL FILE FIELD */}
       <input
-        type="hidden"
+        ref={fileInputRef}
+        type="file"
         name="audio"
-        value={audioBlobRef.current ? "HAS_AUDIO" : ""}
+        hidden
+        accept="audio/*"
       />
 
       {!isRecording ? (
